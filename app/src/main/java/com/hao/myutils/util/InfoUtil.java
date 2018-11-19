@@ -11,10 +11,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InfoUtil {
 
-    private InfoUtil() {}
+    private InfoUtil() {
+    }
 
     private static final String CPU_INFO_PATH = "/proc/cpuinfo";
 
@@ -32,6 +35,32 @@ public class InfoUtil {
         } catch (IOException e) {
         }
         return Build.HARDWARE;
+    }
+
+//    public static String getDeviceID(){
+//        // 反射获取
+//        String CPUID =  android.os.SystemProperties.get("ro.hardware.cpuid", "0");
+//        return CPUID;
+//    }
+
+    public static Map<String, String> getCPUInfo() throws IOException {
+        Map<String, String> output = new HashMap<>();
+        BufferedReader br = new BufferedReader(new FileReader("/proc/cpuinfo"));
+        String str;
+        while ((str = br.readLine()) != null) {
+            String[] data = str.split(":");
+            if (data.length > 1) {
+                String key = data[0].trim().replace(" ", "_");
+                if (key.equals("model_name")) key = "cpu_model";
+                String value = data[1].trim();
+                if (key.equals("cpu_model"))
+                    value = value.replaceAll("\\s+", " ");
+                output.put(key, value);
+            }
+        }
+
+        br.close();
+        return output;
     }
 
     // 实时获取CPU当前频率（单位KHZ）
@@ -87,7 +116,7 @@ public class InfoUtil {
 
     // 获取SDCard大小
     public static long[] getSDCardMemory() {
-        long[] sdCardInfo=new long[2];
+        long[] sdCardInfo = new long[2];
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             File sdcardDir = Environment.getExternalStorageDirectory();
@@ -103,8 +132,8 @@ public class InfoUtil {
     }
 
     // 获取系统版本信息
-    public static String[] getVersion(){
-        String[] version={"null","null","null","null"};
+    public static String[] getVersion() {
+        String[] version = {"null", "null", "null", "null"};
         String str1 = "/proc/version";
         String str2;
         String[] arrayOfString;
@@ -114,13 +143,13 @@ public class InfoUtil {
                     localFileReader, 8192);
             str2 = localBufferedReader.readLine();
             arrayOfString = str2.split("\\s+");
-            version[0]=arrayOfString[2];//KernelVersion
+            version[0] = arrayOfString[2];//KernelVersion
             localBufferedReader.close();
         } catch (IOException e) {
         }
         version[1] = Build.VERSION.RELEASE;// firmware version
-        version[2]=Build.MODEL;//model
-        version[3]=Build.DISPLAY;//system version
+        version[2] = Build.MODEL;//model
+        version[3] = Build.DISPLAY;//system version
         return version;
     }
 
