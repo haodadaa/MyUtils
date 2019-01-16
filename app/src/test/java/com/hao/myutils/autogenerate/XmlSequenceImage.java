@@ -10,10 +10,10 @@ public class XmlSequenceImage {
     @Test
     public void generateXml() {
         String dirPath = "/Users/yanhh/YHH/XML";
-        String fileName = "lottery_box_gain.xml";
-        String prefixName = "gain_";
+        String fileName = "lottery_cat_wakeup.xml";
+        String prefixName = "wakeup_";
         int firstSuffix = 0;
-        int endSuffix = 42;
+        int endSuffix = 37;
         int duration = 83;
         File outFile = new File(dirPath, fileName);
         generateFile(outFile, prefixName, firstSuffix, endSuffix, duration);
@@ -50,7 +50,7 @@ public class XmlSequenceImage {
                 "<animation-list xmlns:android=\"http://schemas.android.com/apk/res/android\">\n");
 
         for (int i = firstSuffix; i <= endSuffix; i++) {
-            outSb.append("<item\n" +
+            outSb.append("    <item\n" +
                     "        android:drawable=\"@drawable/");
             outSb.append(prefixName);
             outSb.append(i);
